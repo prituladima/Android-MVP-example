@@ -3,6 +3,7 @@ package com.prituladima.android.redit.presenter;
 import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.BasePresenter;
 import com.prituladima.android.redit.arch.RedditTopContract;
+import com.prituladima.android.redit.model.DataManager;
 import com.prituladima.android.redit.model.api.RedditApi;
 import com.prituladima.android.redit.util.Logger;
 import com.prituladima.android.redit.util.Mappers;
@@ -29,6 +30,9 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
     RedditApi redditApi;
 
     @Inject
+    DataManager dataManager;
+
+    @Inject
     public RedditPresenter() {
         RedditApplication.getInjector().inject(this);
     }
@@ -44,33 +48,27 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
         if (subscription != null && subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
+        dataManager.resetCounter();
     }
 
     @Override
-    public void syncAndUpdateView() {
-        subscription = redditApi.getPage(50, "")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(Mappers.getRedditMapper())
+    public void syncAndUpdateView(boolean refresh) {
+        if (refresh) dataManager.resetCounter();
+        subscription = dataManager.sync()
                 .subscribe(
-                        (list) -> getMvpView().onUpdateData(list),
-                        (throwable) -> {
-                            LOGGER.error(throwable);
-                            if (throwable instanceof UnknownHostException)
-                                getMvpView().onNoInternetError();
-                            else if (throwable instanceof HttpException || throwable instanceof SocketTimeoutException)
-                                getMvpView().onServerError();
+                        (list) -> {
+                            if (refresh) {
+                                if (list.isEmpty())
+                                    getMvpView().onNoDataAvailable();
+                                else
+                                    getMvpView().onUpdateData(list);
+                            } else {
+                                if (list.isEmpty())
+                                    getMvpView().onStopLoading();
+                                else
+                                    getMvpView().onAddData(list);
+                            }
                         }
                 );
-    }
-
-    @Override
-    public void syncAndSuggestToUpdateView() {
-
-    }
-
-    @Override
-    public void getAndUpadateView() {
-
     }
 }

@@ -5,11 +5,16 @@ import android.app.Application;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.orhanobut.hawk.Hawk;
 import com.prituladima.android.redit.dagger.ContextModule;
 import com.prituladima.android.redit.dagger.DaggerInjector;
 import com.prituladima.android.redit.dagger.Injector;
+import com.prituladima.android.redit.model.db.HawkAutoValueParser;
+import com.prituladima.android.redit.util.Logger;
 
 public class RedditApplication extends Application {
+
+    private Logger LOGGER = new Logger(RedditApplication.class);
 
     public static RedditApplication getInstance() {
         return redditApplication;
@@ -21,7 +26,6 @@ public class RedditApplication extends Application {
 
     private static Injector injector;
     private static RedditApplication redditApplication;
-
 
     @Override
     public void onCreate() {
@@ -42,6 +46,11 @@ public class RedditApplication extends Application {
                 .build();
 
         ImageLoader.getInstance().init(config);
+
+        Hawk.init(this)
+                .setParser(new HawkAutoValueParser())
+                .setLogInterceptor((message) -> LOGGER.log(message))
+                .build();
 
     }
 

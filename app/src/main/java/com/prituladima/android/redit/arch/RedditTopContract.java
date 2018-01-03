@@ -8,23 +8,19 @@ public interface RedditTopContract {
 
     interface RedditTopView extends IView {
 
+        void onNoDataAvailable();
+
         void onUpdateData(List<ArticleDTO> list);
 
-        void onSuggestToUpdateDate();
-        
-        void onServerError();
+        void onAddData(List<ArticleDTO> list);
 
-        void onNoInternetError();
+        void onStopLoading();
 
     }
 
     interface IRedditPresenter {
 
-        void syncAndUpdateView();
-
-        void syncAndSuggestToUpdateView();
-
-        void getAndUpadateView();
+        void syncAndUpdateView(boolean refresh);
 
     }
 

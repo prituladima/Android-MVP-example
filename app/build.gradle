@@ -63,5 +63,7 @@ dependencies {
 
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
+    implementation 'com.orhanobut:hawk:2.0.1'
+
     compileOnly "io.michaelrocks:paranoid-core:0.1.7"
 }
