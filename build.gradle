@@ -3,10 +3,12 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'io.michaelrocks:paranoid-gradle-plugin:0.1.7'
+        classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     }
 }
 
@@ -14,6 +16,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 }
 

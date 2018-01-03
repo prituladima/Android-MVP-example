@@ -4,22 +4,18 @@ import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.BasePresenter;
 import com.prituladima.android.redit.arch.RedditTopContract;
 import com.prituladima.android.redit.model.api.RedditApi;
-import com.prituladima.android.redit.model.dto.ArticleDTO;
-import com.prituladima.android.redit.model.dto.ChildrenDTO;
-import com.prituladima.android.redit.model.dto.ResponceDTO;
 import com.prituladima.android.redit.util.Logger;
-import com.prituladima.android.redit.view.RedditActivity;
+import com.prituladima.android.redit.util.Mappers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import retrofit2.HttpException;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 @Singleton
@@ -27,7 +23,6 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
 
     private static Logger LOGGER = new Logger(RedditPresenter.class);
 
-    private RedditTopContract.RedditTopView redditTopView;
     private Subscription subscription;
 
     @Inject
@@ -46,47 +41,27 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
     @Override
     public void detachView() {
         super.detachView();
-        if(subscription != null && subscription.isUnsubscribed()){
+        if (subscription != null && subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
     }
 
     @Override
     public void syncAndUpdateView() {
-        redditApi.getPage(25, "")
+        subscription = redditApi.getPage(50, "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-
-                .map(new Func1<ResponceDTO, List<ChildrenDTO>>() {
-                    @Override
-                    public List<ChildrenDTO> call(ResponceDTO responceDTO) {
-                        return responceDTO.data().children();
-                    }
-                })
-
-                .map(new Func1<List<ChildrenDTO>, List<ArticleDTO>>() {
-                    @Override
-                    public List<ArticleDTO> call(List<ChildrenDTO> children) {
-                        List<ArticleDTO> list = new ArrayList<>();
-                        for(ChildrenDTO current:children)
-                            list.add(current.data());
-
-                        return list;
-                    }
-                })
-
-                .subscribe(new Action1<List<ArticleDTO>>() {
-                    @Override
-                    public void call(List<ArticleDTO> list) {
-                        LOGGER.error(list.toString());
-                        getMvpView().onUpdateData(list);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        LOGGER.error(throwable.toString());
-                    }
-                });
+                .map(Mappers.getRedditMapper())
+                .subscribe(
+                        (list) -> getMvpView().onUpdateData(list),
+                        (throwable) -> {
+                            LOGGER.error(throwable);
+                            if (throwable instanceof UnknownHostException)
+                                getMvpView().onNoInternetError();
+                            else if (throwable instanceof HttpException || throwable instanceof SocketTimeoutException)
+                                getMvpView().onServerError();
+                        }
+                );
     }
 
     @Override

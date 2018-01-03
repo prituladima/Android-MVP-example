@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Reddit client</string>
+
+    <string name="author_">Author: %s</string>
+    <string name="subreddit_">Subreddit: %s</string>
+
+
+
 </resources>

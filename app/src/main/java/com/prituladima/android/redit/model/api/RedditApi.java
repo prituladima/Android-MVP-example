@@ -5,6 +5,8 @@ import com.prituladima.android.redit.BuildConfig;
 import com.prituladima.android.redit.model.dto.ResponceDTO;
 import com.ryanharter.auto.value.gson.AutoValueGsonTypeAdapterFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import okhttp3.OkHttpClient;
@@ -13,7 +15,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
 
@@ -38,6 +39,9 @@ public interface RedditApi {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(50, TimeUnit.SECONDS)
+                    .writeTimeout(50, TimeUnit.SECONDS)
+                    .readTimeout(50, TimeUnit.SECONDS)
                     .addInterceptor(interceptor)
                     .build();
 

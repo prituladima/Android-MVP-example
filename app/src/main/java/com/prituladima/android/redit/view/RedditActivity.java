@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import com.prituladima.android.redit.R;
 import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.RedditTopContract;
-import com.prituladima.android.redit.model.api.RedditApi;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
 import com.prituladima.android.redit.presenter.RedditPresenter;
 import com.prituladima.android.redit.util.Logger;
@@ -26,13 +25,9 @@ import butterknife.ButterKnife;
 public class RedditActivity extends AppCompatActivity implements RedditTopContract.RedditTopView {
 
     private static Logger LOGGER = new Logger(RedditActivity.class);
-    @Inject
-    RedditApi api;
-
 
     @Inject
     RedditPresenter redditPresenter;
-
     ListAdapter listAdapter;
 
     @BindView(R.id.recycler_view)
@@ -49,25 +44,27 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
         listAdapter = new ListAdapter(this);
         mRecyclerView.setAdapter(listAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        redditPresenter.attachView(this);
-        redditPresenter.syncAndUpdateView();
 
-
-        /*
-
-*/
+        mSwipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.syncAndUpdateView());
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStart() {
+        super.onStart();
+        redditPresenter.attachView(this);
+        redditPresenter.syncAndUpdateView();
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    protected void onStop() {
         redditPresenter.detachView();
-        super.onDestroy();
+        super.onStop();
     }
 
     @Override
     public void onUpdateData(List<ArticleDTO> list) {
         listAdapter.setData(list);
-        listAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
@@ -78,11 +75,11 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
 
     @Override
     public void onServerError() {
-
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onNoInternetError() {
-
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

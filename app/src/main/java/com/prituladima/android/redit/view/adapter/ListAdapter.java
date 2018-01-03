@@ -1,6 +1,5 @@
 package com.prituladima.android.redit.view.adapter;
 
-
 import android.content.Context;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
@@ -19,9 +18,6 @@ import com.prituladima.android.redit.model.dto.ArticleDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,32 +35,23 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     public void setData(List<ArticleDTO> articles) {
         this.articles = articles;
+        notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
-        return new ViewHolder(itemView);
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ArticleDTO current = articles.get(position);
-        holder.nameTextView.setText(current.title());
-        //holder.emailTextView.setText(aNew.getDateLine());
-
+        holder.titleTextView.setText(current.title());
+        holder.authorTextView.setText(context.getResources().getString(R.string.author_, current.author()));
+        holder.subredditTextView.setText(context.getResources().getString(R.string.subreddit_, current.subreddit()));
+        holder.thumbImageView.setImageDrawable(null);
         ImageLoader.getInstance().displayImage(current.thumbnail(), holder.thumbImageView);
-        holder.listItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String url = BASE_URL + current.url();
-
-                new CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(url));
-
-
-            }
-        });
+        holder.listItem.setOnClickListener((view) -> new CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(BASE_URL + current.url())));
     }
 
     @Override
@@ -72,14 +59,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return articles.size();
     }
 
-
     class ViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.text_name)
-        TextView nameTextView;
 
         @BindView(R.id.imageView)
         ImageView thumbImageView;
+
+        @BindView(R.id.text_title)
+        TextView titleTextView;
+
+        @BindView(R.id.text_author)
+        TextView authorTextView;
+
+        @BindView(R.id.text_subreddit)
+        TextView subredditTextView;
 
         @BindView(R.id.card_view)
         CardView listItem;

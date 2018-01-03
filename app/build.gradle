@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-
-
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'io.michaelrocks.paranoid'
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -14,11 +14,21 @@ android {
     }
     buildTypes {
         release {
-            apply plugin: 'io.michaelrocks.paranoid'
             minifyEnabled true
             shrinkResources true
+            proguardFiles fileTree(dir: "proguard", include: ["*.pro"]).asList().toArray()
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles fileTree(dir: "proguard", include: ["*.pro"]).asList().toArray()
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
