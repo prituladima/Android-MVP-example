@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.prituladima.android.redit.R;
@@ -16,7 +15,7 @@ import com.prituladima.android.redit.arch.RedditTopContract;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
 import com.prituladima.android.redit.presenter.RedditPresenter;
 import com.prituladima.android.redit.util.Logger;
-import com.prituladima.android.redit.view.adapter.ListAdapter;
+import com.prituladima.android.redit.view.adapter.RedditAdapter;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
 
     @Inject
     RedditPresenter redditPresenter;
-    ListAdapter listAdapter;
+    RedditAdapter listAdapter;
     LinearLayoutManager linearLayoutManager;
 
     @BindView(R.id.recycler_view)
@@ -46,7 +45,7 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
         setContentView(R.layout.activity_main);
         RedditApplication.getInjector().inject(this);
         ButterKnife.bind(this);
-        listAdapter = new ListAdapter(this);
+        listAdapter = new RedditAdapter(this);
         mRecyclerView.setAdapter(listAdapter);
         linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -56,8 +55,6 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (mSwipeRefreshLayout.isRefreshing()) return;
-
-
                 int visibleItemCount = linearLayoutManager.getChildCount();
                 int totalItemCount = linearLayoutManager.getItemCount();
                 int pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
@@ -88,7 +85,7 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
     @Override
     public void onNoDataAvailable() {
         // TODO: 1/3/18 empty view
-        Toast.makeText(this, "No data available", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.no_data_available, Toast.LENGTH_LONG).show();
         onStopLoading();
     }
 

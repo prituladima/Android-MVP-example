@@ -65,5 +65,7 @@ dependencies {
 
     implementation 'com.orhanobut:hawk:2.0.1'
 
+    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+
     compileOnly "io.michaelrocks:paranoid-core:0.1.7"
 }

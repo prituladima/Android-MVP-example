@@ -3,4 +3,5 @@
     <string name="author_">Author: %s</string>
     <string name="subreddit_">Subreddit: %s</string>
     <string name="update_view_text">Update news</string>
+    <string name="no_data_available">No data available</string>
 </resources>

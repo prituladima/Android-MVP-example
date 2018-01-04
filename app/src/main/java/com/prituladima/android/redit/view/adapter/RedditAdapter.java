@@ -15,20 +15,24 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.prituladima.android.redit.R;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.prituladima.android.redit.BuildConfig.BASE_URL;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
+public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder> {
 
     private List<ArticleDTO> articles;
     private Context context;
 
-    public ListAdapter(Context context) {
+    public RedditAdapter(Context context) {
         this.context = context;
         articles = new ArrayList<>();
     }
@@ -54,9 +58,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.titleTextView.setText(current.title());
         holder.authorTextView.setText(context.getResources().getString(R.string.author_, current.author()));
         holder.subredditTextView.setText(context.getResources().getString(R.string.subreddit_, current.subreddit()));
+        long time = new Double(current.created_utc()).longValue() * 1000;
+        holder.text_time.setText(new PrettyTime(new Locale("en")).format(new Date(time)));
+
         holder.thumbImageView.setImageDrawable(null);
         ImageLoader.getInstance().displayImage(current.thumbnail(), holder.thumbImageView);
-        holder.listItem.setOnClickListener((view) -> new CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(BASE_URL + current.url())));
+        holder.listItem.setOnClickListener((view) -> new CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(BASE_URL + current.permalink())));
     }
 
     @Override
@@ -77,6 +84,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         @BindView(R.id.text_subreddit)
         TextView subredditTextView;
+
+        @BindView(R.id.text_time)
+        TextView text_time;
 
         @BindView(R.id.card_view)
         CardView listItem;
