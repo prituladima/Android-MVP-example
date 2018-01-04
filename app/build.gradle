@@ -14,15 +14,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles fileTree(dir: "proguard", include: ["*.pro"]).asList().toArray()
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        debug {
             minifyEnabled false
             shrinkResources false
-            proguardFiles fileTree(dir: "proguard", include: ["*.pro"]).asList().toArray()
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
