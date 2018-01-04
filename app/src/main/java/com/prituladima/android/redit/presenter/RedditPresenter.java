@@ -4,7 +4,6 @@ import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.BasePresenter;
 import com.prituladima.android.redit.arch.RedditTopContract;
 import com.prituladima.android.redit.model.Repository;
-import com.prituladima.android.redit.model.api.RedditApi;
 import com.prituladima.android.redit.util.Logger;
 
 import javax.inject.Inject;
@@ -18,9 +17,6 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
     private static Logger LOGGER = new Logger(RedditPresenter.class);
 
     private Subscription subscription;
-
-    @Inject
-    RedditApi redditApi;
 
     @Inject
     Repository repository;

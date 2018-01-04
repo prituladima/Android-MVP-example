@@ -10,7 +10,6 @@ import com.ryanharter.auto.value.gson.AutoValueGsonTypeAdapterFactory;
 
 import java.lang.reflect.Type;
 
-
 public class HawkAutoValueParser implements Parser {
 
     private final Gson mGson;

@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
-
 @AutoValue
 public abstract class ResponceDTO {
 
@@ -20,17 +19,3 @@ public abstract class ResponceDTO {
     }
 
 }
-
-/**
- *
- * {
- "kind":"Listing",
- "data":{
- "modhash":"",
- "whitelist_status":"all_ads",
- "children":[],
- "after":"t3_7nhue2",
- "before":null
- }
- }
- * */

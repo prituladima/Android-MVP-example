@@ -34,10 +34,10 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
     LinearLayoutManager linearLayoutManager;
 
     @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    RecyclerView recyclerView;
 
     @BindView(R.id.swipe_container)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,26 +46,26 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
         RedditApplication.getInjector().inject(this);
         ButterKnife.bind(this);
         listAdapter = new RedditAdapter(this);
-        mRecyclerView.setAdapter(listAdapter);
+        recyclerView.setAdapter(listAdapter);
         linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (mSwipeRefreshLayout.isRefreshing()) return;
+                if (swipeRefreshLayout.isRefreshing()) return;
                 int visibleItemCount = linearLayoutManager.getChildCount();
                 int totalItemCount = linearLayoutManager.getItemCount();
                 int pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                    swipeRefreshLayout.setRefreshing(true);
                     redditPresenter.getRedditTop(false);
                 }
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.getRedditTop(true));
+        swipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.getRedditTop(true));
     }
 
     @Override
@@ -73,7 +73,7 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
         super.onStart();
         redditPresenter.attachView(this);
         redditPresenter.getRedditTop(true);
-        mSwipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -103,6 +103,6 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
 
     @Override
     public void onStopLoading() {
-        mSwipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

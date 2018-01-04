@@ -31,11 +31,3 @@ public abstract class DataDTO {
     }
 
 }
-/**
- *
- * "modhash":"",
- "whitelist_status":"all_ads",
- "children":[],
- "after":"t3_7nhue2",
- "before":null
- * */

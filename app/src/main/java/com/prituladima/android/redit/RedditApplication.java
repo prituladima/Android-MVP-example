@@ -16,21 +16,15 @@ public class RedditApplication extends Application {
 
     private Logger LOGGER = new Logger(RedditApplication.class);
 
-    public static RedditApplication getInstance() {
-        return redditApplication;
-    }
-
     public static Injector getInjector() {
-        return getInstance().injector;
+        return injector;
     }
 
     private static Injector injector;
-    private static RedditApplication redditApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        redditApplication = this;
         injector = DaggerInjector
                 .builder()
                 .contextModule(new ContextModule(this))
