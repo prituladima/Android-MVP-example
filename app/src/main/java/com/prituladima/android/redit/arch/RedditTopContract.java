@@ -20,7 +20,7 @@ public interface RedditTopContract {
 
     interface IRedditPresenter {
 
-        void syncAndUpdateView(boolean refresh);
+        void getRedditTop(boolean refresh);
 
     }
 

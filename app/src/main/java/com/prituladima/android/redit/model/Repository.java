@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DataManager {
+public class Repository {
 
     public static final int DEFAULT_PAGE_SIZE = 25;
 
@@ -38,11 +38,11 @@ public class DataManager {
     int nextPage = 0;
 
     @Inject
-    public DataManager() {
+    public Repository() {
         RedditApplication.getInjector().inject(this);
     }
 
-    public Observable<List<ArticleDTO>> sync() {
+    public Observable<List<ArticleDTO>> getRedditTop() {
         return redditApi.getPage(DEFAULT_PAGE_SIZE, heshes.get(nextPage))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

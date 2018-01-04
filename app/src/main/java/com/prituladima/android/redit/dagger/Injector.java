@@ -1,7 +1,7 @@
 package com.prituladima.android.redit.dagger;
 
 import com.prituladima.android.redit.RedditApplication;
-import com.prituladima.android.redit.model.DataManager;
+import com.prituladima.android.redit.model.Repository;
 import com.prituladima.android.redit.presenter.RedditPresenter;
 import com.prituladima.android.redit.view.RedditActivity;
 
@@ -24,6 +24,6 @@ public interface Injector {
 
     void inject(RedditPresenter redditPresenter);
 
-    void inject(DataManager dataManager);
+    void inject(Repository repository);
 
 }

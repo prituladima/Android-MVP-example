@@ -3,21 +3,14 @@ package com.prituladima.android.redit.presenter;
 import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.BasePresenter;
 import com.prituladima.android.redit.arch.RedditTopContract;
-import com.prituladima.android.redit.model.DataManager;
+import com.prituladima.android.redit.model.Repository;
 import com.prituladima.android.redit.model.api.RedditApi;
 import com.prituladima.android.redit.util.Logger;
-import com.prituladima.android.redit.util.Mappers;
-
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import retrofit2.HttpException;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 @Singleton
 public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopView> implements RedditTopContract.IRedditPresenter {
@@ -30,7 +23,7 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
     RedditApi redditApi;
 
     @Inject
-    DataManager dataManager;
+    Repository repository;
 
     @Inject
     public RedditPresenter() {
@@ -48,13 +41,13 @@ public class RedditPresenter extends BasePresenter<RedditTopContract.RedditTopVi
         if (subscription != null && subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
-        dataManager.resetCounter();
+        repository.resetCounter();
     }
 
     @Override
-    public void syncAndUpdateView(boolean refresh) {
-        if (refresh) dataManager.resetCounter();
-        subscription = dataManager.sync()
+    public void getRedditTop(boolean refresh) {
+        if (refresh) repository.resetCounter();
+        subscription = repository.getRedditTop()
                 .subscribe(
                         (list) -> {
                             if (refresh) {

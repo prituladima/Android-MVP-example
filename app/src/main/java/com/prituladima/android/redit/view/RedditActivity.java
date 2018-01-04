@@ -60,19 +60,19 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
                 int pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     mSwipeRefreshLayout.setRefreshing(true);
-                    redditPresenter.syncAndUpdateView(false);
+                    redditPresenter.getRedditTop(false);
                 }
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.syncAndUpdateView(true));
+        mSwipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.getRedditTop(true));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         redditPresenter.attachView(this);
-        redditPresenter.syncAndUpdateView(true);
+        redditPresenter.getRedditTop(true);
         mSwipeRefreshLayout.setRefreshing(true);
     }
 
