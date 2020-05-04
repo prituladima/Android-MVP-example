@@ -2,14 +2,18 @@ package com.prituladima.android.redit.view.adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+//import android.support.customtabs.CustomTabsIntent;
+//import android.support.v7.widget.CardView;
+//import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.prituladima.android.redit.R;
@@ -28,6 +32,7 @@ import butterknife.ButterKnife;
 import static com.prituladima.android.redit.BuildConfig.BASE_URL;
 
 public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder> {
+
 
     private List<ArticleDTO> articles;
     private Context context;
@@ -58,7 +63,7 @@ public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder
         holder.titleTextView.setText(current.title());
         holder.authorTextView.setText(context.getResources().getString(R.string.author_, current.author()));
         holder.subredditTextView.setText(context.getResources().getString(R.string.subreddit_, current.subreddit()));
-        long time = new Double(current.created_utc()).longValue() * 1000;
+        long time = Double.valueOf(current.created_utc()).longValue() * 1000;
         holder.text_time.setText(new PrettyTime(new Locale("en")).format(new Date(time)));
 
         holder.thumbImageView.setImageDrawable(null);
@@ -71,7 +76,7 @@ public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder
         return articles.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.imageView)
         ImageView thumbImageView;

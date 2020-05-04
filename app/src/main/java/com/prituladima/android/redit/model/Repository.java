@@ -4,7 +4,8 @@ import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.model.api.RedditApi;
 import com.prituladima.android.redit.model.db.HawkLocalStorage;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
-import com.prituladima.android.redit.model.dto.ResponceDTO;
+import com.prituladima.android.redit.model.dto.ResponseDTO;
+import com.prituladima.android.redit.util.Logger;
 import com.prituladima.android.redit.util.Mappers;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Repository {
-
+    private static Logger LOGGER = new Logger(Repository.class);
     public static final int DEFAULT_PAGE_SIZE = 25;
 
     @Inject
@@ -27,13 +28,13 @@ public class Repository {
     @Inject
     HawkLocalStorage localStorage;
 
-    List<String> heshes = new ArrayList<>();
+    private List<String> hashPointers = new ArrayList<>();
 
     {
-        heshes.add("");
+        hashPointers.add("");
     }
 
-    int nextPage = 0;
+    private int nextPage = 0;
 
     @Inject
     public Repository() {
@@ -41,25 +42,37 @@ public class Repository {
     }
 
     public Observable<List<ArticleDTO>> getRedditTop() {
-        return redditApi.getPage(DEFAULT_PAGE_SIZE, heshes.get(nextPage))
+        return redditApi.getPage(DEFAULT_PAGE_SIZE, hashPointers.get(nextPage))
+
+                .map(debug -> {
+                    System.out.println(debug);
+                    return debug;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(responceDTO -> localStorage.saveTop(responceDTO, DEFAULT_PAGE_SIZE, heshes.get(nextPage)))
-                .onErrorReturn(throwable -> localStorage.getTop(DEFAULT_PAGE_SIZE, heshes.get(nextPage)))
+
+                .map(responceDTO -> localStorage.saveTop(responceDTO, DEFAULT_PAGE_SIZE, hashPointers.get(nextPage)))
+                .onErrorReturn(throwable -> {
+                    System.out.println(throwable);
+                    return localStorage.getTop(DEFAULT_PAGE_SIZE, hashPointers.get(nextPage));
+                })
                 .map(this::increaseCounter)
                 .map(Mappers.getRedditMapper())
-                .onErrorReturn(throwable -> new ArrayList<>());
+                .onErrorReturn(throwable -> {
+                    LOGGER.error(throwable);
+                    return new ArrayList<>();
+                });
     }
 
-    public ResponceDTO increaseCounter(ResponceDTO responceDTO) {
-        heshes.add(responceDTO.data().after());
+    private ResponseDTO increaseCounter(ResponseDTO responseDTO) {
+        hashPointers.add(responseDTO.data().after());
         nextPage++;
-        return responceDTO;
+        return responseDTO;
     }
 
     public void resetCounter() {
-        heshes.clear();
-        heshes.add("");
+        hashPointers.clear();
+        hashPointers.add("");
         nextPage = 0;
     }
 

@@ -6,7 +6,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 @AutoValue
-public abstract class ResponceDTO {
+public abstract class ResponseDTO {
 
     @SerializedName("kind")
     public abstract String kind();
@@ -14,8 +14,8 @@ public abstract class ResponceDTO {
     @SerializedName("data")
     public abstract DataDTO data();
 
-    public static TypeAdapter<ResponceDTO> typeAdapter(Gson gson) {
-        return new AutoValue_ResponceDTO.GsonTypeAdapter(gson);
+    public static TypeAdapter<ResponseDTO> typeAdapter(Gson gson) {
+        return new AutoValue_ResponseDTO.GsonTypeAdapter(gson);
     }
 
 }

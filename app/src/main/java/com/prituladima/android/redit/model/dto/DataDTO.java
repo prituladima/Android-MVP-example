@@ -14,8 +14,8 @@ public abstract class DataDTO {
     @SerializedName("modhash")
     public abstract String modhash();
 
-    @SerializedName("whitelist_status")
-    public abstract String whitelist_status();
+//    @SerializedName("whitelist_status")
+//    public abstract String whitelist_status();
 
     @SerializedName("children")
     public abstract List<ChildrenDTO> children();

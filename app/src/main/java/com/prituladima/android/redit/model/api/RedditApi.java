@@ -2,7 +2,7 @@ package com.prituladima.android.redit.model.api;
 
 import com.google.gson.GsonBuilder;
 import com.prituladima.android.redit.BuildConfig;
-import com.prituladima.android.redit.model.dto.ResponceDTO;
+import com.prituladima.android.redit.model.dto.ResponseDTO;
 import com.ryanharter.auto.value.gson.AutoValueGsonTypeAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
@@ -21,7 +21,7 @@ import rx.Observable;
 public interface RedditApi {
 
     @GET("/top.json")
-    Observable<ResponceDTO> getPage(@Query("count") int count, @Query("after") String after);
+    Observable<ResponseDTO> getPage(@Query("count") int count, @Query("after") String after);
 
     class Factory {
 
