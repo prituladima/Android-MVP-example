@@ -2,21 +2,19 @@ package com.prituladima.android.redit.view.adapter;
 
 import android.content.Context;
 import android.net.Uri;
-//import android.support.customtabs.CustomTabsIntent;
-//import android.support.v7.widget.CardView;
-//import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.prituladima.android.redit.R;
+import com.prituladima.android.redit.databinding.ItemListBinding;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -26,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import static com.prituladima.android.redit.BuildConfig.BASE_URL;
 
@@ -52,9 +48,10 @@ public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false));
+        return new ViewHolder(ItemListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -66,8 +63,8 @@ public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder
         long time = Double.valueOf(current.created_utc()).longValue() * 1000;
         holder.text_time.setText(new PrettyTime(new Locale("en")).format(new Date(time)));
 
-        holder.thumbImageView.setImageDrawable(null);
-        ImageLoader.getInstance().displayImage(current.thumbnail(), holder.thumbImageView);
+        holder.imageView.setImageDrawable(null);
+        ImageLoader.getInstance().displayImage(current.thumbnail(), holder.imageView);
         holder.listItem.setOnClickListener((view) -> new CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(BASE_URL + current.permalink())));
     }
 
@@ -78,27 +75,21 @@ public class RedditAdapter extends RecyclerView.Adapter<RedditAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.imageView)
-        ImageView thumbImageView;
-
-        @BindView(R.id.text_title)
+        ImageView imageView;
         TextView titleTextView;
-
-        @BindView(R.id.text_author)
         TextView authorTextView;
-
-        @BindView(R.id.text_subreddit)
         TextView subredditTextView;
-
-        @BindView(R.id.text_time)
         TextView text_time;
-
-        @BindView(R.id.card_view)
         CardView listItem;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public ViewHolder(ItemListBinding binding) {
+            super(binding.getRoot());
+            imageView = binding.imageView;
+            titleTextView = binding.textTitle;
+            authorTextView = binding.textAuthor;
+            subredditTextView = binding.textSubreddit;
+            text_time = binding.textTime;
+            listItem = binding.cardView;
         }
     }
 }

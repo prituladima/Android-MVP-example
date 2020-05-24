@@ -1,24 +1,19 @@
 package com.prituladima.android.redit.view;
 
 import android.os.Bundle;
-//import android.support.annotation.Nullable;
-//import android.support.v4.widget.SwipeRefreshLayout;
-//import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.DefaultItemAnimator;
-//import android.support.v7.widget.LinearLayoutManager;
-//import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.prituladima.android.redit.R;
 import com.prituladima.android.redit.RedditApplication;
 import com.prituladima.android.redit.arch.RedditTopContract;
+import com.prituladima.android.redit.databinding.ActivityMainBinding;
 import com.prituladima.android.redit.model.dto.ArticleDTO;
 import com.prituladima.android.redit.presenter.RedditPresenter;
 import com.prituladima.android.redit.util.Logger;
@@ -28,8 +23,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class RedditActivity extends AppCompatActivity implements RedditTopContract.RedditTopView {
 
@@ -40,39 +33,38 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
     RedditAdapter listAdapter;
     LinearLayoutManager linearLayoutManager;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.swipe_container)
-    SwipeRefreshLayout swipeRefreshLayout;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        RedditApplication.getInjector().inject(this);
-        ButterKnife.bind(this);
-        listAdapter = new RedditAdapter(this);
-        recyclerView.setAdapter(listAdapter);
-        linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        RedditApplication.getInjector().inject(this);
+
+        listAdapter = new RedditAdapter(this);
+        binding.recyclerView.setAdapter(listAdapter);
+        linearLayoutManager = new LinearLayoutManager(this);
+        binding.recyclerView.setLayoutManager(linearLayoutManager);
+        binding.recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (swipeRefreshLayout.isRefreshing()) return;
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (binding.swipeContainer.isRefreshing()) return;
                 int visibleItemCount = linearLayoutManager.getChildCount();
                 int totalItemCount = linearLayoutManager.getItemCount();
                 int pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    swipeRefreshLayout.setRefreshing(true);
+                    binding.swipeContainer.setRefreshing(true);
                     redditPresenter.getRedditTop(false);
                 }
             }
         });
 
-        swipeRefreshLayout.setOnRefreshListener(() -> redditPresenter.getRedditTop(true));
+        binding.swipeContainer.setOnRefreshListener(() -> redditPresenter.getRedditTop(true));
     }
 
     @Override
@@ -80,13 +72,14 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
         super.onStart();
         redditPresenter.attachView(this);
         redditPresenter.getRedditTop(true);
-        swipeRefreshLayout.setRefreshing(true);
+        binding.swipeContainer.setRefreshing(true);
     }
 
     @Override
     protected void onStop() {
         redditPresenter.detachView();
         super.onStop();
+        binding = null;
     }
 
     @Override
@@ -110,6 +103,6 @@ public class RedditActivity extends AppCompatActivity implements RedditTopContra
 
     @Override
     public void onStopLoading() {
-        swipeRefreshLayout.setRefreshing(false);
+        binding.swipeContainer.setRefreshing(false);
     }
 }
